@@ -1,144 +1,143 @@
-import_library 
- from netmiko import (
-     ConnectHandler,
-     NetmikoTimeoutException,
-     NetmikoAuthenticationException,
+
+#import_library 
+from netmiko import (
+ ConnectHandler,
+ NetmikoTimeoutException,
+ NetmikoAuthenticationException,
  )
 
  #router_ssh users inputs
- cisco_router = {
-     'device_type': '',
-     'host': '',
-     'username':'' ,
-     'password':'',
-     'secret': ''
+cisco_router = {
+ 'device_type': '',
+ 'host': '',
+ 'username':'' ,
+ 'password':'',
+ 'secret': ''
  }
-     #Users choice of connecting 
-     print=('Would you like to connect via SSH or Telnet?')
-     user_choice = input('Please select 1 or 2 : 1 = SSH and 2 = Telnet')
-     if user_choice == "1":
-         #connecting ssh
-         cisco_router["device_type"] = "cisco_ios" 
-         cisco_router["host"] = input("Please enter your IP address" ),
-         cisco_router["username"] = input("Please enter your username" ),
-         cisco_router["password"] = input("Please enter your password" ),
-         cisco_router["secret"] = input("Please enter your secret" ),
-         ssh = ConnectHandler(**cisco_router)
-         #enabling ssh
-         ssh.enable()
-         #output of ssh
+ #Users choice of connecting 
+print=('Would you like to connect via SSH or Telnet?')
+user_choice = input('Please select 1 or 2 : 1 = SSH and 2 = Telnet')
+if user_choice == "1":
+#connecting ssh
+    cisco_router["device_type"] = "cisco_ios" 
+    cisco_router["host"] = input("Please enter your IP address" ),
+    cisco_router["username"] = input("Please enter your username" ),
+    cisco_router["password"] = input("Please enter your password" ),
+    cisco_router["secret"] = input("Please enter your secret" ),
+    ssh = ConnectHandler(**cisco_router)
+    #enabling ssh
+    ssh.enable()
+    #output of ssh
+    output=ssh.send_command('show running-config')
+    print(output)
+    configFile = open('config.txt', 'w')
+    configFile.write(output)
+    configFile.close()
+  #What does the user want to do
+    print=('Would you like Compare the Configurations of a Network device?')
+    input=input('Select yes or No')
+ 
+    if input == "yes" or "Yes":
+      #What does the user want compared
+      print=('Do you want to compare the startup-config with the running-config or Compare the running-config with an Offline Version?')
+      choice=input('Please select Choice 1 or 2')
+      if choice =="1":
+      #comparing start-up config
+         startup=ssh.send_command('show startup-config')
+         startuptxt = open('start_config.txt','w')
+         startuptxt.write(startup)
+         startuptxt.close()
+         startuptxt = open('start_config.txt','r')
+         output=send_command('show running-config')
+         configFile = open('config.txt', 'r')
+         differences= difflib.unified_diff(output,startuptx.readlines(),n=0)
+         for diff in diffs:
+            print(differences)
+      elif choice =="2":
+         #compare running config with offline version
          output=ssh.send_command('show running-config')
-         print(output)
          configFile = open('config.txt', 'w')
          configFile.write(output)
          configFile.close()
-          #What does the user want to do
-         print=('Would you like Compare the Configurations of a Network device?')
-         input=input('Select yes or No)
-         if input == "yes" or "Yes":
-          #What does the user want compared
-          print=('Do you want to compare the startup-config with the running-config or Compare the running-config with an Offline Version?')
-          choice=input('Please select Choice 1 or 2')
-              if choice =="1":
-              #comparing start-up config
-                 startup=ssh.send_command('show startup-config')
-                 startuptxt = open('start_config.txt','w')
-                 startuptxt.write(startup)
-                 startuptxt.close()
-                 startuptxt = open('start_config.txt','r')
-                 output=send_command('show running-config')
-                 configFile = open('config.txt', 'r')
-                 differences= difflib.unified_diff(output,startuptx.readlines(),n=0)
-                 for diff in diffs:
-                    print(differences)
-              elif choice =="2":
-                 #compare running config with offline version
-                 output=ssh.send_command('show running-config')
-                 configFile = open('config.txt', 'w')
-                 configFile.write(output)
-                 configFile.close()
-                 configFile = open('config.txt', 'r')
-                 diffs= difflib.unified_diff(output,configFile.readlines(),n=0)
-                 for diff in diffs:
-                     print(diff)
-              else:
-                 print("Invalid Choice")
-         elif input =="no" or "No":
-             close()
-          else:
-              print('Invalid Option')       
-     elif user_choice == "2":
-         #connecting telnet
-         cisco_router["device_type"] = "cisco_ios_telnet"
-         cisco_router["host"] = input("Please enter your IP address" ),
-         cisco_router["username"] = input("Please enter your username" ),
-         cisco_router["password"] = input("Please enter your password" ),
-         telnet = ConnectHandler(**cisco_ios_telnet)
-          #What does the user want to do
-         print=('Would you like Compare the Configurations of a Network device?')
-         input=input('Select yes or No)
-         if input == "yes" or "Yes":
-          #What does the user want compared
-          print=('Do you want to compare the startup-config with the running-config or Compare the running-config with an Offline Version?')
-          choice=input('Please select Choice 1 or 2')
-              if choice =="1":
-              #comparing start-up config
-                 startup=ssh.send_command('show startup-config')
-                 startuptxt = open('start_config.txt','w')
-                 startuptxt.write(startup)
-                 startuptxt.close()
-                 startuptxt = open('start_config.txt','r')
-                 output=ssh.send_command('show running-config')
-                 configFile = open('config.txt', 'r')
-                 differences= difflib.unified_diff(output,startuptx.readlines(),n=0)
-                 for diff in diffs:
-                    print(differences)
-                elif choice =="2":
-                 #compare running config with offline version
-                 output=send_command('show running-config')
-                 configFile = open('config.txt', 'w')
-                 configFile.write(output)
-                 configFile.close()
-                 configFile = open('config.txt', 'r')
-                 diffs= difflib.unified_diff(output,configFile.readlines(),n=0)
-                 for diff in diffs:
-                     print(diff)
-                else:
-                    print("Invalid Choice")
-        elif input =="no" or "No":
-             close()
-        else:
-            print('Invalid Option') 
-     else:
-         print('Invalid Input')
-         
-    #Set a looback and ip address
-    print('Would you like to set a loopback with an IP address')
-    input=input('Select yes or no')
-    if input =='yes' or 'Yes':
-        loopback_inteface=ssh.send_command('int loopback0')
-        ssh.send_command('ip address 192.168.56.101 255.255.255.0')
-        loopback=ssh.send_command('ping Loopback')
-        print(loopback)
-    elif input == 'No' or 'no':
-        close()
+         configFile = open('config.txt', 'r')
+         diffs= difflib.unified_diff(output,configFile.readlines(),n=0)
+         for diff in diffs:
+             print(diff)
+      else:
+         print("Invalid Choice")
+    elif input == "no" or "No":
+          close()
     else:
-        print('invalid input')
-              
-    #Protocol RIP
-    print('Would you like to execute the RIP protocol')
-    input=input('Select yes or no')
-    if input =='yes' or 'Yes':
-        inteface=ssh.send_command('router rip')
-        router0=ssh.send_command('network 10.1.1.0')
-        router1=ssh.send_command('network 10.1.1.2')
-        rip=ssh.send_command('show ip rip')
-        print(rip)
-    elif input == 'No' or 'no':
-        close()
-    else:
-        print('invalid input')
-        
+      print('Invalid Option')       
+elif user_choice == "2":
+ #connecting telnet
+ cisco_router["device_type"] = "cisco_ios_telnet"
+ cisco_router["host"] = input("Please enter your IP address" ),
+ cisco_router["username"] = input("Please enter your username" ),
+ cisco_router["password"] = input("Please enter your password" ),
+ telnet = ConnectHandler(**cisco_ios_telnet)
+  #What does the user want to do
+ print=('Would you like Compare the Configurations of a Network device?')
+ input=input('Select yes or No')
+ if input == "yes" or "Yes":
+  #What does the user want compared
+  print=('Do you want to compare the startup-config with the running-config or Compare the running-config with an Offline Version?')
+  choice=input('Please select Choice 1 or 2')
+  if choice =="1":
+      #comparing start-up config
+         startup=ssh.send_command('show startup-config')
+         startuptxt = open('start_config.txt','w')
+         startuptxt.write(startup)
+         startuptxt.close()
+         startuptxt = open('start_config.txt','r')
+         output=ssh.send_command('show running-config')
+         configFile = open('config.txt', 'r')
+         differences= difflib.unified_diff(output,startuptx.readlines(),n=0)
+         for diff in diffs:
+            print(differences)
+  elif choice =="2":
+         #compare running config with offline version
+         output=send_command('show running-config')
+         configFile = open('config.txt', 'w')
+         configFile.write(output)
+         configFile.close()
+         configFile = open('config.txt', 'r')
+         diffs= difflib.unified_diff(output,configFile.readlines(),n=0)
+         for diff in diffs:
+             print(diff)
+  else:
+            print("Invalid Choice")
+elif input =="no" or "No":
+     close()
+else:
+    print('Invalid Option') 
+
+ 
+#Set a looback and ip address
+print('Would you like to set a loopback with an IP address')
+input=input('Select yes or no')
+if input =='yes' or 'Yes':
+    loopback_inteface=ssh.send_command('int loopback0')
+    ssh.send_command('ip address 192.168.56.101 255.255.255.0')
+    loopback=ssh.send_command('ping Loopback')
+    print(loopback)
+elif input == 'No' or 'no':
+    close()
+else:
+    print('invalid input')
+      
+#Protocol RIP
+print('Would you like to execute the RIP protocol')
+input=input('Select yes or no')
+if input =='yes' or 'Yes':
+    inteface=ssh.send_command('router rip')
+    router0=ssh.send_command('network 10.1.1.0')
+    router1=ssh.send_command('network 10.1.1.2')
+    rip=ssh.send_command('show ip rip')
+    print(rip)
+elif input == 'No' or 'no':
+    close()
+else:
+    print('invalid input')
+
   
-if __name__'__main__':
-    menu()
